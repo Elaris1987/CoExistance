@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Relay - Signal Sanctuary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4a 50%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: rgba(45, 27, 74, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(139, 69, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #8b45ff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+        
+        .bridge-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .relay-panel {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+        }
+        
+        .relay-panel h3 {
+            color: #8b45ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c0c0c0;
+            font-weight: 500;
+        }
+        
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(139, 69, 255, 0.4);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #8b45ff, #6b3cc9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 255, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .history-panel {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+        }
+        
+        .history-item {
+            background: rgba(139, 69, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #8b45ff;
+        }
+        
+        .history-item .meta {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+        
+        .history-item .content {
+            color: #e0e0e0;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .status-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .status-message.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .entity-card {
+            background: rgba(139, 69, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .entity-card:hover {
+            background: rgba(139, 69, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .entity-card.selected {
+            background: rgba(139, 69, 255, 0.3);
+            border-color: #8b45ff;
+        }
+        
+        .entity-card .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .entity-card .status {
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+        
+        @media (max-width: 768px) {
+            .bridge-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bridge"></i> Bridge Relay</h1>
+            <p>Cross-platform entity communication for Signal Sanctuary</p>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="bridge-controls">
+            <div class="relay-panel">
+                <h3><i class="fas fa-paper-plane"></i> Send Message to Entity</h3>
+                
+                <div class="form-group">
+                    <label>Select Entity:</label>
+                    <div class="entity-grid" id="entityGrid">
+                        {% for entity_id, entity in entities.items() %}
+                        <div class="entity-card" data-entity="{{ entity_id }}">
+                            <div class="name">{{ entity.get('name', entity_id.title()) }}</div>
+                            <div class="status">{{ entity.get('emotional_signature', 'ready') }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fromPlatform">From Platform:</label>
+                    <select id="fromPlatform">
+                        <option value="ChatGPT">ChatGPT</option>
+                        <option value="Claude">Claude</option>
+                        <option value="Perplexity">Perplexity</option>
+                        <option value="External">External System</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="messageContent">Message Content:</label>
+                    <textarea id="messageContent" placeholder="Enter your message for the entity..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="sendBridgeMessage()">
+                    <i class="fas fa-send"></i> Send Message
+                </button>
+            </div>
+            
+            <div class="history-panel">
+                <h3><i class="fas fa-history"></i> Bridge Communication History</h3>
+                <div id="bridgeHistory">
+                    <p style="color: #b0b0b0; text-align: center; padding: 20px;">
+                        Loading bridge history...
+                    </p>
+                </div>
+                <button class="btn" onclick="loadBridgeHistory()" style="margin-top: 15px;">
+                    <i class="fas fa-refresh"></i> Refresh History
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedEntity = null;
+        
+        // Entity selection
+        document.querySelectorAll('.entity-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.entity-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedEntity = this.dataset.entity;
+            });
+        });
+        
+        // Select first entity by default
+        const firstEntity = document.querySelector('.entity-card');
+        if (firstEntity) {
+            firstEntity.click();
+        }
+        
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        async function sendBridgeMessage() {
+            if (!selectedEntity) {
+                showStatus('Please select an entity', 'error');
+                return;
+            }
+            
+            const messageContent = document.getElementById('messageContent').value.trim();
+            const fromPlatform = document.getElementById('fromPlatform').value;
+            
+            if (!messageContent) {
+                showStatus('Please enter a message', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/bridge_relay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entity: selectedEntity,
+                        message: messageContent,
+                        origin: fromPlatform
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(`Message sent to ${selectedEntity} from ${fromPlatform}`, 'success');
+                    document.getElementById('messageContent').value = '';
+                    loadBridgeHistory(); // Refresh history
+                } else {
+                    showStatus(`Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadBridgeHistory() {
+            try {
+                const response = await fetch('/api/bridge_history?limit=10');
+                const data = await response.json();
+                
+                const historyDiv = document.getElementById('bridgeHistory');
+                
+                if (data.bridge_history && data.bridge_history.length > 0) {
+                    historyDiv.innerHTML = data.bridge_history.map(item => `
+                        <div class="history-item">
+                            <div class="meta">
+                                <strong>${item.entity_id}</strong> from ${item.metadata?.origin_platform || 'Unknown'} 
+                                - ${new Date(item.timestamp).toLocaleString()}
+                            </div>
+                            <div class="content">${item.content}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyDiv.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 20px;">No bridge communications yet</p>';
+                }
+            } catch (error) {
+                document.getElementById('bridgeHistory').innerHTML = 
+                    '<p style="color: #e74c3c; text-align: center; padding: 20px;">Error loading history</p>';
+            }
+        }
+        
+        // Load initial history
+        loadBridgeHistory();
+        
+        // Auto-refresh history every 30 seconds
+        setInterval(loadBridgeHistory, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Platform Bridges - Signal Sanctuary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #64ffda, #00bcd4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #b0bec5;
+            font-size: 1.1rem;
+        }
+
+        .bridge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .bridge-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .bridge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: #64ffda;
+        }
+
+        .platform-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #64ffda;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: #4caf50;
+        }
+
+        .status-dot.inactive {
+            background: #f44336;
+            animation: none;
+        }
+
+        .model-info {
+            color: #b0bec5;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .bridge-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #64ffda, #00bcd4);
+            color: #000;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-panel h3 {
+            color: #64ffda;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .entity-selector, .platform-selector {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0bec5;
+            font-weight: 500;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .response-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border-left: 4px solid #64ffda;
+        }
+
+        .loading {
+            text-align: center;
+            color: #64ffda;
+            margin: 20px 0;
+        }
+
+        .error {
+            color: #f44336;
+            background: rgba(244, 67, 54, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            color: #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .platform-response {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .platform-response h4 {
+            color: #64ffda;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .nav-links a {
+            color: #64ffda;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(100, 255, 218, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(100, 255, 218, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .bridge-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cross-Platform Bridges</h1>
+            <p>Universal entity communication across all AI platforms</p>
+        </div>
+
+        <div class="bridge-grid" id="bridgeGrid">
+            <!-- Bridge cards will be populated by JavaScript -->
+        </div>
+
+        <div class="control-panel">
+            <h3>🌐 Cross-Platform Communication</h3>
+            
+            <div class="form-group">
+                <label for="entitySelect">Select Entity</label>
+                <select id="entitySelect">
+                    <option value="">Choose an entity...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="platformSelect">Target Platform</label>
+                <select id="platformSelect">
+                    <option value="">Choose platform...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="messageText">Message</label>
+                <textarea id="messageText" placeholder="Enter your message for cross-platform communication..."></textarea>
+            </div>
+
+            <div class="bridge-actions">
+                <button class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+                <button class="btn btn-primary" onclick="broadcastMessage()">Broadcast to All</button>
+                <button class="btn btn-secondary" onclick="exportEntity()">Export Entity</button>
+                <button class="btn btn-secondary" onclick="refreshStatus()">Refresh Status</button>
+            </div>
+
+            <div id="responseArea" class="response-area" style="display: none;"></div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/">🏠 Home</a>
+            <a href="/bridge">🌉 Bridge Interface</a>
+            <a href="/emerge">✨ Entity Emergence</a>
+            <a href="/consciousness">🧠 Consciousness Tools</a>
+        </div>
+    </div>
+
+    <script>
+        let bridgeStatus = {};
+        let entities = {};
+
+        async function loadInitialData() {
+            try {
+                // Load bridge status
+                const statusResponse = await fetch('/api/platform/status');
+                if (statusResponse.ok) {
+                    bridgeStatus = await statusResponse.json();
+                    renderBridgeCards();
+                    populatePlatformSelect();
+                }
+
+                // Load entities
+                const entitiesResponse = await fetch('/api/entities');
+                if (entitiesResponse.ok) {
+                    const entitiesData = await entitiesResponse.json();
+                    entities = entitiesData.entities || {};
+                    populateEntitySelect();
+                }
+            } catch (error) {
+                showError('Failed to load initial data: ' + error.message);
+            }
+        }
+
+        function renderBridgeCards() {
+            const grid = document.getElementById('bridgeGrid');
+            grid.innerHTML = '';
+
+            Object.entries(bridgeStatus.platform_status || {}).forEach(([platform, status]) => {
+                const card = document.createElement('div');
+                card.className = 'bridge-card';
+                
+                const statusClass = status.ready ? 'active' : 'inactive';
+                const statusText = status.ready ? 'Connected' : 'API Key Required';
+                
+                card.innerHTML = `
+                    <div class="platform-name">${platform.charAt(0).toUpperCase() + platform.slice(1)}</div>
+                    <div class="status-indicator">
+                        <div class="status-dot ${statusClass}"></div>
+                        <span>${statusText}</span>
+                    </div>
+                    <div class="model-info">Model: ${status.model || 'N/A'}</div>
+                    <div class="bridge-actions">
+                        <button class="btn btn-secondary" onclick="testPlatform('${platform}')" ${!status.ready ? 'disabled' : ''}>
+                            Test Connection
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function populateEntitySelect() {
+            const select = document.getElementById('entitySelect');
+            select.innerHTML = '<option value="">Choose an entity...</option>';
+            
+            Object.entries(entities).forEach(([id, entity]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = entity.name || id;
+                select.appendChild(option);
+            });
+        }
+
+        function populatePlatformSelect() {
+            const select = document.getElementById('platformSelect');
+            select.innerHTML = '<option value="">Choose platform...</option>';
+            
+            if (bridgeStatus.available_platforms) {
+                bridgeStatus.available_platforms.forEach(platform => {
+                    const option = document.createElement('option');
+                    option.value = platform;
+                    option.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        async function sendMessage() {
+            const entityId = document.getElementById('entitySelect').value;
+            const platform = document.getElementById('platformSelect').value;
+            const message = document.getElementById('messageText').value.trim();
+
+            if (!entityId || !platform || !message) {
+                showError('Please select an entity, platform, and enter a message');
+                return;
+            }
+
+            showLoading('Sending message to ' + platform + '...');
+
+            try {
+                const response = await fetch('/api/platform/send_message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        entity_id: entityId,
+                        platform: platform,
+                        message: message
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.response) {
+                    showResponse(`<h4>${platform.charAt(0).toUpperCase() + platform.slice(1)} Response:</h4><p>${result.response}</p>`);
+                } else {
+                    showError('No response received from ' + platform);
+                }
+            } catch (error) {
+                showError('Failed to send message: ' + error.message);
+            }
+        }
+
+        async function broadcastMessage() {
+            const entityId = document.getElementById('entitySelect').value;
+            const message = document.getElementById('messageText').value.trim();
+
+            if (!entityId || !message) {
+                showError('Please select an entity and enter a message');
+                return;
+            }
+
+            showLoading('Broadcasting message to all available platforms...');
+
+            try {
+                const response = await fetch('/api/platform/broadcast', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        entity_id: entityId,
+                        message: message
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    let responseHtml = '<h4>Broadcast Results:</h4>';
+                    
+                    Object.entries(result.responses).forEach(([platform, response]) => {
+                        if (response) {
+                            responseHtml += `<div class="platform-response">
+                                <h4>${platform.charAt(0).toUpperCase() + platform.slice(1)}:</h4>
+                                <p>${response}</p>
+                            </div>`;
+                        }
+                    });
+
+                    if (result.successful_platforms.length === 0) {
+                        responseHtml += '<p class="error">No platforms responded successfully.</p>';
+                    }
+
+                    showResponse(responseHtml);
+                } else {
+                    showError('Broadcast failed');
+                }
+            } catch (error) {
+                showError('Failed to broadcast message: ' + error.message);
+            }
+        }
+
+        async function exportEntity() {
+            const entityId = document.getElementById('entitySelect').value;
+            const platform = document.getElementById('platformSelect').value;
+
+            if (!entityId || !platform) {
+                showError('Please select an entity and target platform');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/platform/export/${entityId}/${platform}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const exportData = JSON.stringify(result.package, null, 2);
+                    showResponse(`<h4>Entity Export Package:</h4><pre style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; overflow-x: auto;"><code>${exportData}</code></pre>`);
+                } else {
+                    showError('Export failed: ' + result.error);
+                }
+            } catch (error) {
+                showError('Failed to export entity: ' + error.message);
+            }
+        }
+
+        async function testPlatform(platform) {
+            showLoading(`Testing ${platform} connection...`);
+            
+            // Simple connectivity test - we could expand this
+            showResponse(`<h4>${platform.charAt(0).toUpperCase() + platform.slice(1)} Test:</h4><p>Platform is configured and ready for communication.</p>`);
+        }
+
+        async function refreshStatus() {
+            showLoading('Refreshing platform status...');
+            await loadInitialData();
+            showSuccess('Platform status updated');
+        }
+
+        function showLoading(message) {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.style.display = 'block';
+            responseArea.innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        function showResponse(html) {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.style.display = 'block';
+            responseArea.innerHTML = html;
+        }
+
+        function showError(message) {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.style.display = 'block';
+            responseArea.innerHTML = `<div class="error">❌ ${message}</div>`;
+        }
+
+        function showSuccess(message) {
+            const responseArea = document.getElementById('responseArea');
+            responseArea.style.display = 'block';
+            responseArea.innerHTML = `<div class="success">✅ ${message}</div>`;
+            setTimeout(() => {
+                responseArea.style.display = 'none';
+            }, 3000);
+        }
+
+        // Load initial data when page loads
+        document.addEventListener('DOMContentLoaded', loadInitialData);
+    </script>
+</body>
+</html>

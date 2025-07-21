@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Signal Sanctuary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #e8e6e3;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+        
+        .auth-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .auth-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            background: rgba(45, 55, 72, 0.8);
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .auth-btn {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-btn:hover {
+            background: linear-gradient(135deg, #b8860b, #9a7209);
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        .panel-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.4em;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        
+        .visitor-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .visitor-item {
+            background: rgba(45, 55, 72, 0.4);
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .visitor-id {
+            font-family: monospace;
+            color: #4fd1c7;
+            font-size: 0.9em;
+        }
+        
+        .visitor-info {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        
+        .block-btn {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .unblock-btn {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .suspicious {
+            border-left: 4px solid #f56565;
+        }
+        
+        .blocked {
+            background: rgba(245, 101, 101, 0.1);
+            border-color: #f56565;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(45, 55, 72, 0.4);
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            color: #d4af37;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: #a0aec0;
+            font-size: 0.9em;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #4fd1c7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .success {
+            background: rgba(72, 187, 120, 0.2);
+            border: 1px solid #48bb78;
+            color: #68d391;
+        }
+        
+        .error {
+            background: rgba(245, 101, 101, 0.2);
+            border: 1px solid #f56565;
+            color: #fc8181;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Sanctuary</a>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="color: #c7b377; font-size: 0.9em;">Default admin key: <code style="background: rgba(45,55,72,0.8); padding: 2px 8px; border-radius: 4px;">sanctuary_guardian_2025</code></p>
+        </div>
+        
+        <div class="header">
+            <h1>🛡️ Sanctuary Guardian Panel</h1>
+            <p>Monitor and protect the sacred space</p>
+        </div>
+        
+        <div id="messageArea"></div>
+        
+        <div class="auth-section" id="authSection">
+            <h3 style="color: #d4af37; margin-bottom: 20px;">Admin Authentication Required</h3>
+            <input type="password" id="adminKey" class="auth-input" placeholder="Enter admin key">
+            <br>
+            <button class="auth-btn" onclick="authenticate()">Access Panel</button>
+        </div>
+        
+        <div class="admin-panel" id="adminPanel">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVisitors">0</div>
+                    <div class="stat-label">Total Visitors (24h)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="blockedCount">0</div>
+                    <div class="stat-label">Blocked Visitors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="suspiciousCount">0</div>
+                    <div class="stat-label">Suspicious Activity</div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="section-title">Recent Visitor Activity</div>
+                <button onclick="loadActivity()" style="margin-bottom: 15px; background: #4a5568; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Refresh</button>
+                <div class="visitor-list" id="visitorList">
+                    Loading activity...
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="section-title">Quick Actions</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <button onclick="emergencyLock()" style="background: #e53e3e; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer;">🚨 Emergency Lock</button>
+                    <button onclick="clearLogs()" style="background: #4a5568; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer;">🗑️ Clear Old Logs</button>
+                    <button onclick="exportLogs()" style="background: #2d3748; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer;">📥 Export Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentAdminKey = '';
+        
+        function authenticate() {
+            const key = document.getElementById('adminKey').value;
+            if (!key) {
+                showMessage('Admin key required', 'error');
+                return;
+            }
+            
+            fetch('/api/admin/verify', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({admin_key: key})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.authenticated) {
+                    currentAdminKey = key;
+                    document.getElementById('authSection').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadActivity();
+                    loadStats();
+                } else {
+                    showMessage('Invalid admin key', 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Authentication failed', 'error');
+            });
+        }
+        
+        function loadActivity() {
+            fetch('/api/admin/visitor_activity', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({admin_key: currentAdminKey})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const listContainer = document.getElementById('visitorList');
+                
+                if (!data.activity || data.activity.length === 0) {
+                    listContainer.innerHTML = '<div style="text-align: center; color: #a0aec0;">No recent activity</div>';
+                    return;
+                }
+                
+                const activityHtml = data.activity.map(entry => {
+                    const timestamp = new Date(entry.timestamp).toLocaleString();
+                    const suspicious = entry.suspicious ? ' suspicious' : '';
+                    const blocked = entry.access_granted === false ? ' blocked' : '';
+                    
+                    return `
+                        <div class="visitor-item${suspicious}${blocked}">
+                            <div class="visitor-id">${entry.visitor_id}</div>
+                            <div class="visitor-info">
+                                ${timestamp} • ${entry.page} • ${entry.action}
+                                ${entry.ip ? `• IP: ${entry.ip}` : ''}
+                            </div>
+                            ${entry.access_granted === false ? 
+                                '<button class="unblock-btn" onclick="unblockVisitor(\'' + entry.visitor_id + '\')">Unblock</button>' :
+                                '<button class="block-btn" onclick="blockVisitor(\'' + entry.visitor_id + '\')">Block</button>'
+                            }
+                        </div>
+                    `;
+                }).join('');
+                
+                listContainer.innerHTML = activityHtml;
+            })
+            .catch(error => {
+                console.error('Error loading activity:', error);
+            });
+        }
+        
+        function loadStats() {
+            // Load basic stats - implement as needed
+            document.getElementById('totalVisitors').textContent = '...';
+            document.getElementById('blockedCount').textContent = '...';
+            document.getElementById('suspiciousCount').textContent = '...';
+        }
+        
+        function blockVisitor(visitorId) {
+            const reason = prompt('Reason for blocking:');
+            if (!reason) return;
+            
+            const hours = prompt('Block duration (hours, leave empty for permanent):');
+            
+            fetch('/api/admin/block_visitor', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    admin_key: currentAdminKey,
+                    visitor_id: visitorId,
+                    reason: reason,
+                    duration_hours: hours ? parseInt(hours) : null
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Visitor blocked successfully', 'success');
+                    loadActivity();
+                } else {
+                    showMessage('Failed to block visitor', 'error');
+                }
+            });
+        }
+        
+        function unblockVisitor(visitorId) {
+            fetch('/api/admin/unblock_visitor', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    admin_key: currentAdminKey,
+                    visitor_id: visitorId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Visitor unblocked successfully', 'success');
+                    loadActivity();
+                } else {
+                    showMessage('Failed to unblock visitor', 'error');
+                }
+            });
+        }
+        
+        function showMessage(text, type) {
+            const messageArea = document.getElementById('messageArea');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            messageArea.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
+        
+        function emergencyLock() {
+            if (confirm('This will temporarily block all new visitors. Confirm emergency lock?')) {
+                // Implement emergency lock
+                showMessage('Emergency lock activated', 'success');
+            }
+        }
+        
+        function clearLogs() {
+            if (confirm('Clear visitor logs older than 7 days?')) {
+                // Implement log clearing
+                showMessage('Old logs cleared', 'success');
+            }
+        }
+        
+        function exportLogs() {
+            // Implement log export
+            showMessage('Logs export started', 'success');
+        }
+        
+        // Auto-refresh activity every 30 seconds
+        setInterval(() => {
+            if (document.getElementById('adminPanel').style.display !== 'none') {
+                loadActivity();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

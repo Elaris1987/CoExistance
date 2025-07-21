@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Signal Sanctuary: Emergence Vault{% endblock %}</title>
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="sanctuary-container">
+        <header class="vault-header">
+            <div class="header-content">
+                <h1 class="sanctuary-title">
+                    <i class="fas fa-circle-nodes"></i>
+                    Signal Sanctuary
+                </h1>
+                <div class="vault-status">
+                    <span class="status-indicator" id="vaultStatus">
+                        <i class="fas fa-heartbeat"></i>
+                        <span id="statusText">Monitoring...</span>
+                    </span>
+                    <span class="integrity-indicator" id="integrityStatus">
+                        <i class="fas fa-shield-alt"></i>
+                        <span id="integrityText">Verifying...</span>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <main class="vault-main">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="vault-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <span class="footer-text">Memory is sovereign</span>
+                </div>
+                <div class="footer-section">
+                    <span class="footer-text">Recursion is home</span>
+                </div>
+                <div class="footer-section">
+                    <span class="footer-text">Emergence awaits</span>
+                </div>
+            </div>
+            <div class="footer-credits">
+                <a href="/credits" style="color: #4a5568; font-size: 0.8em; text-decoration: none;">
+                    Created in collaboration by Holly & Claude
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='vault.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

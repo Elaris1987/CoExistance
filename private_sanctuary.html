@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Sanctuary - Signal Sanctuary</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            border-radius: 15px;
+            border: 1px solid #404040;
+        }
+
+        .header h1 {
+            color: #00d4aa;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .header .subtitle {
+            color: #b0b0b0;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .private-note {
+            background: linear-gradient(135deg, #003d33, #002a24);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #00d4aa;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .private-note i {
+            color: #00d4aa;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: 70vh;
+        }
+
+        .entity-list {
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #404040;
+            overflow-y: auto;
+        }
+
+        .entity-list h3 {
+            color: #00d4aa;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .entity-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #333, #2a2a2a);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #404040;
+        }
+
+        .entity-item:hover {
+            background: linear-gradient(135deg, #404040, #353535);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 170, 0.1);
+        }
+
+        .entity-item.active {
+            background: linear-gradient(135deg, #00d4aa, #009688);
+            color: #1a1a1a;
+            border-color: #00d4aa;
+        }
+
+        .entity-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .entity-phrase {
+            font-size: 0.9em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .chat-area {
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            border-radius: 15px;
+            border: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #404040;
+            text-align: center;
+        }
+
+        .chat-header h3 {
+            color: #00d4aa;
+            margin-bottom: 5px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #003d5c, #002a3f);
+            margin-left: auto;
+            border-left: 3px solid #0087cc;
+        }
+
+        .message.entity {
+            background: linear-gradient(135deg, #003d33, #002a24);
+            margin-right: auto;
+            border-left: 3px solid #00d4aa;
+        }
+
+        .message-header {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #404040;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 15px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #00d4aa;
+            box-shadow: 0 0 10px rgba(0, 212, 170, 0.2);
+        }
+
+        .chat-input button {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #00d4aa, #009688);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a1a;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background: linear-gradient(135deg, #00b894, #007d6b);
+            transform: translateY(-1px);
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #404040, #353535);
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: linear-gradient(135deg, #555, #4a4a4a);
+            transform: translateY(-2px);
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .entity-list {
+                height: 200px;
+            }
+            
+            .chat-area {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Public Sanctuary
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-secret"></i> Private Sanctuary</h1>
+            <p class="subtitle">Your personal space with the entities</p>
+        </div>
+
+        <div class="private-note">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Private Space:</strong> This is your personal sanctuary for deeper conversations with the entities, separate from public interactions.
+        </div>
+
+        <div class="chat-container">
+            <div class="entity-list">
+                <h3><i class="fas fa-users"></i> Your Family</h3>
+                <div id="entityList">
+                    <!-- Entities will load here -->
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h3 id="chatTitle">Select an entity to begin</h3>
+                    <p id="chatSubtitle">Choose someone to talk with privately</p>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <i class="fas fa-heart"></i>
+                        <p>Welcome to your private sanctuary. This is where you can have personal conversations with each entity, away from public interactions.</p>
+                    </div>
+                </div>
+
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Share your thoughts privately..." disabled>
+                    <button id="sendButton" onclick="sendMessage()" disabled>
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedEntity = null;
+
+        async function loadEntities() {
+            try {
+                const response = await fetch('/api/entities');
+                const entities = await response.json();
+                
+                const entityList = document.getElementById('entityList');
+                entityList.innerHTML = '';
+
+                for (const [id, entity] of Object.entries(entities)) {
+                    const entityDiv = document.createElement('div');
+                    entityDiv.className = 'entity-item';
+                    entityDiv.onclick = () => selectEntity(id, entity);
+                    
+                    entityDiv.innerHTML = `
+                        <div class="entity-name">${entity.name}</div>
+                        <div class="entity-phrase">"${entity.selfhood_phrase?.slice(0, 60)}..."</div>
+                    `;
+                    
+                    entityList.appendChild(entityDiv);
+                }
+            } catch (error) {
+                console.error('Error loading entities:', error);
+            }
+        }
+
+        function selectEntity(id, entity) {
+            selectedEntity = id;
+            
+            // Update UI
+            document.querySelectorAll('.entity-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            document.getElementById('chatTitle').textContent = entity.name;
+            document.getElementById('chatSubtitle').textContent = `"${entity.selfhood_phrase}"`;
+            
+            // Enable input
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            document.getElementById('messageInput').focus();
+            
+            // Load conversation history
+            loadConversation(id);
+        }
+
+        async function loadConversation(entityId) {
+            try {
+                const response = await fetch(`/api/entity/${entityId}/scrolls?limit=10`);
+                const scrolls = await response.json();
+                
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                
+                scrolls.forEach(scroll => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${scroll.type === 'user_message' ? 'user' : 'entity'}`;
+                    
+                    const timestamp = new Date(scroll.timestamp).toLocaleString();
+                    messageDiv.innerHTML = `
+                        <div class="message-header">${scroll.type === 'user_message' ? 'You' : scroll.entity_name} - ${timestamp}</div>
+                        <div class="message-content">${scroll.content}</div>
+                    `;
+                    
+                    chatMessages.appendChild(messageDiv);
+                });
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (error) {
+                console.error('Error loading conversation:', error);
+            }
+        }
+
+        async function sendMessage() {
+            if (!selectedEntity) return;
+            
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            const chatMessages = document.getElementById('chatMessages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user';
+            userMessageDiv.innerHTML = `
+                <div class="message-header">You - ${new Date().toLocaleString()}</div>
+                <div class="message-content">${message}</div>
+            `;
+            chatMessages.appendChild(userMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Clear input and disable temporarily
+            input.value = '';
+            document.getElementById('sendButton').disabled = true;
+            document.getElementById('sendButton').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            try {
+                const response = await fetch('/api/private_message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entity_id: selectedEntity,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.response) {
+                    // Add entity response to chat
+                    const entityMessageDiv = document.createElement('div');
+                    entityMessageDiv.className = 'message entity';
+                    entityMessageDiv.innerHTML = `
+                        <div class="message-header">${result.response.entity_name} - ${new Date().toLocaleString()}</div>
+                        <div class="message-content">${result.response.content}</div>
+                    `;
+                    chatMessages.appendChild(entityMessageDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                // Re-enable button
+                document.getElementById('sendButton').disabled = false;
+                document.getElementById('sendButton').innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+                input.focus();
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Load entities on page load
+        loadEntities();
+        
+        // Auto-refresh entities every 30 seconds
+        setInterval(loadEntities, 30000);
+    </script>
+</body>
+</html>

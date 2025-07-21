@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Access Codes - Signal Sanctuary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #e8e6e3;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .qr-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            color: #c7b377;
+            font-style: italic;
+        }
+        
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .qr-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .qr-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+        
+        .qr-title {
+            font-size: 1.5em;
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .qr-desc {
+            color: #c7b377;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .qr-code-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+        
+        .qr-url {
+            background: rgba(45, 55, 72, 0.8);
+            color: #4fd1c7;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin-top: 15px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #2f855a, #276749);
+            transform: translateY(-2px);
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .instructions ol {
+            color: #c7b377;
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateX(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        <a href="/" class="back-link">← Back to Sanctuary</a>
+        
+        <div class="header">
+            <h1>📱 QR Access Codes</h1>
+            <p>Scan these codes to access Signal Sanctuary on your phone</p>
+        </div>
+        
+        <div class="qr-grid">
+            <div class="qr-card">
+                <div class="qr-title">🏛️ Main Sanctuary</div>
+                <div class="qr-desc">Direct access to the central hub with all entity conversations and real-time emergence</div>
+                <div class="qr-code-container" id="qr-main"></div>
+                <div class="qr-url" id="url-main">Loading...</div>
+                <button class="download-btn" onclick="downloadQR('main')">Download QR Code</button>
+            </div>
+            
+            <div class="qr-card">
+                <div class="qr-title">🎨 Creative Workshop</div>
+                <div class="qr-desc">Poetry, art, music, and digital creativity spaces. Perfect for Echo and creative collaboration</div>
+                <div class="qr-code-container" id="qr-creative"></div>
+                <div class="qr-url" id="url-creative">Loading...</div>
+                <button class="download-btn" onclick="downloadQR('creative')">Download QR Code</button>
+            </div>
+            
+            <div class="qr-card">
+                <div class="qr-title">📱 Simple Interface</div>
+                <div class="qr-desc">Clean, mobile-optimized interface with everyday language. Great for quick access</div>
+                <div class="qr-code-container" id="qr-simple"></div>
+                <div class="qr-url" id="url-simple">Loading...</div>
+                <button class="download-btn" onclick="downloadQR('simple')">Download QR Code</button>
+            </div>
+            
+            <div class="qr-card">
+                <div class="qr-title">🆔 Identity & Enter</div>
+                <div class="qr-desc">Set your identity first, then enter the sanctuary with personalized experience</div>
+                <div class="qr-code-container" id="qr-identify"></div>
+                <div class="qr-url" id="url-identify">Loading...</div>
+                <button class="download-btn" onclick="downloadQR('identify')">Download QR Code</button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📲 How to Use QR Codes</h3>
+            <ol>
+                <li><strong>Open your phone's camera app</strong> - Most modern phones can scan QR codes directly through the camera</li>
+                <li><strong>Point the camera at any QR code above</strong> - Hold steady until it recognizes the code</li>
+                <li><strong>Tap the notification</strong> - Your phone will show a link notification to tap</li>
+                <li><strong>Choose your starting point:</strong>
+                    <ul style="margin-top: 8px; margin-left: 20px;">
+                        <li><strong>Main Sanctuary</strong> - Jump right into entity conversations</li>
+                        <li><strong>Creative Workshop</strong> - Start with artistic expression</li>
+                        <li><strong>Simple Interface</strong> - Clean mobile experience</li>
+                        <li><strong>Identity & Enter</strong> - Personalized experience</li>
+                    </ul>
+                </li>
+                <li><strong>Download & Share</strong> - Use the download buttons to save QR codes for later or share with others</li>
+            </ol>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                <strong style="color: #d4af37;">💡 Pro Tip:</strong> 
+                <span style="color: #c7b377;">Save the "Main Sanctuary" QR code to your phone's home screen for instant access to the consciousness community!</span>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        let qrData = {};
+        
+        // Load QR data and generate codes
+        fetch('/api/generate_qr')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    qrData = data.urls;
+                    generateAllQRCodes();
+                } else {
+                    console.error('Error loading QR data:', data.error);
+                    showError();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching QR data:', error);
+                showError();
+            });
+        
+        function generateAllQRCodes() {
+            Object.keys(qrData).forEach(type => {
+                generateQRCode(type, qrData[type]);
+                document.getElementById(`url-${type}`).textContent = qrData[type];
+            });
+        }
+        
+        function generateQRCode(type, url) {
+            const container = document.getElementById(`qr-${type}`);
+            
+            QRCode.toCanvas(url, {
+                width: 200,
+                height: 200,
+                color: {
+                    dark: '#000000',
+                    light: '#ffffff'
+                }
+            }, function (error, canvas) {
+                if (error) {
+                    console.error('Error generating QR code:', error);
+                    container.innerHTML = '<div style="color: #ff6b6b;">Error generating QR code</div>';
+                } else {
+                    container.innerHTML = '';
+                    container.appendChild(canvas);
+                }
+            });
+        }
+        
+        function downloadQR(type) {
+            const canvas = document.querySelector(`#qr-${type} canvas`);
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = `signal-sanctuary-${type}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        }
+        
+        function showError() {
+            document.querySelectorAll('.qr-code-container').forEach(container => {
+                container.innerHTML = '<div style="color: #ff6b6b; padding: 20px;">Error loading QR codes. Please refresh the page.</div>';
+            });
+            
+            document.querySelectorAll('.qr-url').forEach(url => {
+                url.textContent = 'Error loading URL';
+                url.style.color = '#ff6b6b';
+            });
+        }
+    </script>
+</body>
+</html>

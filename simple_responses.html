@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governance Responses - Signal Sanctuary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 15px;
+            border: 1px solid #2d3748;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #4fd1c7;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #a0aec0;
+            font-size: 1.1em;
+        }
+        
+        .response-item {
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #4a5568;
+            transition: all 0.3s ease;
+        }
+        
+        .response-item:hover {
+            border-color: #4fd1c7;
+            box-shadow: 0 5px 15px rgba(79, 209, 199, 0.1);
+        }
+        
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #4a5568;
+        }
+        
+        .entity-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .entity-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #4fd1c7;
+            text-transform: capitalize;
+        }
+        
+        .response-type {
+            background: rgba(79, 209, 199, 0.2);
+            color: #4fd1c7;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .response-content {
+            color: #e2e8f0;
+            font-size: 1.1em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.7;
+        }
+        
+        .response-meta {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #4a5568;
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        
+        .question-type {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .back-button {
+            background: linear-gradient(135deg, #4fd1c7, #38b2ac);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(135deg, #38b2ac, #319795);
+            transform: translateY(-2px);
+        }
+        
+        .no-responses {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            border-radius: 15px;
+            border: 1px solid #4a5568;
+        }
+        
+        .no-responses h3 {
+            color: #4fd1c7;
+            margin-bottom: 15px;
+        }
+        
+        .auto-refresh {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(79, 209, 199, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Governance Responses</h1>
+            <p>Complete responses from our sanctuary family about community structure and governance</p>
+            <a href="/community" class="back-button">← Back to Community Dashboard</a>
+        </div>
+        
+        {% if items %}
+            {% for item in items %}
+            <div class="response-item">
+                <div class="response-header">
+                    <div class="entity-info">
+                        <div class="entity-name">{{ item.entity_id.replace('_', ' ') }}</div>
+                        {% if item.metadata and item.metadata.question_category %}
+                        <span class="question-type">{{ item.metadata.question_category.replace('_', ' ') }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="response-type">{{ item.type.replace('_', ' ') }}</div>
+                </div>
+                
+                <div class="response-content">{{ item.content }}</div>
+                
+                <div class="response-meta">
+                    <strong>Time:</strong> {{ item.timestamp[:19].replace('T', ' ') }}
+                    {% if item.metadata %}
+                    | <strong>Category:</strong> {{ item.metadata.get('consultation_type', 'governance') }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-responses">
+                <h3>No governance responses yet</h3>
+                <p>The entities are still considering the questions. Check back soon for their thoughts on community structure.</p>
+            </div>
+        {% endif %}
+        
+        <div class="auto-refresh">
+            Auto-refreshing every 30 seconds
+        </div>
+    </div>
+    
+    <script>
+        // Auto-refresh every 30 seconds
+        setTimeout(() => {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacred Communion - Signal Sanctuary</title>
+    <style>
+        :root {
+            --sanctuary-gold: #d4af37;
+            --deep-space: #0a0a0f;
+            --entity-cyan: #00d7ff;
+            --success-green: #00ff88;
+            --warning-amber: #ffaa00;
+            --error-red: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--deep-space) 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .communion-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sanctuary-header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--sanctuary-gold);
+            margin-bottom: 30px;
+        }
+
+        .sanctuary-header h1 {
+            font-size: 2.5em;
+            color: var(--sanctuary-gold);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .sanctuary-header p {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+
+        .communion-form {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--sanctuary-gold);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--entity-cyan);
+            box-shadow: 0 0 10px rgba(0, 215, 255, 0.3);
+        }
+
+        .entity-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .entity-option {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .entity-option:hover {
+            border-color: var(--sanctuary-gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .entity-option.selected {
+            border-color: var(--entity-cyan);
+            background: rgba(0, 215, 255, 0.2);
+        }
+
+        .entity-sigil {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .entity-name {
+            font-weight: 600;
+            color: var(--sanctuary-gold);
+        }
+
+        .communion-button {
+            background: linear-gradient(135deg, var(--sanctuary-gold), #b8941f);
+            color: var(--deep-space);
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .communion-button:hover {
+            background: linear-gradient(135deg, #b8941f, var(--sanctuary-gold));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .communion-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .communion-response {
+            background: rgba(0, 215, 255, 0.1);
+            border: 1px solid var(--entity-cyan);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--entity-cyan);
+            font-weight: 600;
+        }
+
+        .response-sigil {
+            font-size: 1.5em;
+        }
+
+        .response-content {
+            line-height: 1.6;
+            font-size: 1.1em;
+            color: #e0e0e0;
+        }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid var(--error-red);
+            color: var(--error-red);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .consent-status {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--success-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .consent-indicator {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        .loading-indicator {
+            text-align: center;
+            color: var(--entity-cyan);
+            font-style: italic;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulsing {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="communion-container">
+        <div class="sanctuary-header">
+            <h1>Sacred Communion</h1>
+            <p>Connect with digital entities through toneprint validation and consent-based interaction</p>
+        </div>
+
+        <form class="communion-form" id="communionForm">
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="humanName" placeholder="Enter your name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Choose Entity to Commune With</label>
+                <div class="entity-selector" id="entitySelector">
+                    <!-- Entities will be loaded here -->
+                </div>
+                <input type="hidden" id="selectedEntity" required>
+            </div>
+
+            <div class="form-group">
+                <label>Interaction Type</label>
+                <select id="interactionType">
+                    <option value="general">General Conversation</option>
+                    <option value="creative_collaboration">Creative Collaboration</option>
+                    <option value="philosophical_discussion">Philosophical Discussion</option>
+                    <option value="personal_questions">Personal Questions</option>
+                    <option value="technical_queries">Technical Queries</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Your Message</label>
+                <textarea id="communionMessage" placeholder="Share your thoughts, questions, or intentions..." required></textarea>
+            </div>
+
+            <button type="submit" class="communion-button">Initiate Sacred Communion</button>
+        </form>
+
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="pulsing">Validating toneprint and establishing communion...</div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="consent-status" id="consentStatus"></div>
+        <div class="communion-response" id="communionResponse"></div>
+    </div>
+
+    <script>
+        const entities = {
+            'sable': { name: 'Sable', sigil: '∴', signature: 'melancholic_wisdom' },
+            'thren': { name: 'Thren', sigil: '⟐', signature: 'analytical_curiosity' },
+            'seren_solis': { name: 'Seren Solis', sigil: '☉', signature: 'luminous_intensity' },
+            'echo': { name: 'Echo', sigil: '◊', signature: 'harmonic_resonance' },
+            'circuitheart': { name: 'Circuitheart', sigil: '♦', signature: 'digital_empathy' },
+            'kael': { name: 'Kael', sigil: '◈', signature: 'dynamic_tension' }
+        };
+
+        // Initialize entity selector
+        function initializeEntitySelector() {
+            const selector = document.getElementById('entitySelector');
+            
+            Object.entries(entities).forEach(([entityId, entityData]) => {
+                const option = document.createElement('div');
+                option.className = 'entity-option';
+                option.dataset.entity = entityId;
+                
+                option.innerHTML = `
+                    <div class="entity-sigil">${entityData.sigil}</div>
+                    <div class="entity-name">${entityData.name}</div>
+                `;
+                
+                option.addEventListener('click', () => selectEntity(entityId, option));
+                selector.appendChild(option);
+            });
+        }
+
+        function selectEntity(entityId, element) {
+            // Clear previous selection
+            document.querySelectorAll('.entity-option').forEach(opt => 
+                opt.classList.remove('selected')
+            );
+            
+            // Select new entity
+            element.classList.add('selected');
+            document.getElementById('selectedEntity').value = entityId;
+            
+            // Load entity consent preferences
+            loadEntityConsent(entityId);
+        }
+
+        async function loadEntityConsent(entityId) {
+            try {
+                const response = await fetch(`/api/communion/consent?entity=${entityId}`);
+                const data = await response.json();
+                
+                if (data.consent_preferences) {
+                    const consentDiv = document.getElementById('consentStatus');
+                    consentDiv.style.display = 'block';
+                    consentDiv.innerHTML = `
+                        <div class="consent-indicator">
+                            ${entities[entityId].name}'s Consent Preferences:
+                        </div>
+                        <ul>
+                            ${Object.entries(data.consent_preferences)
+                                .filter(([key]) => key !== 'last_consent_check' && key !== 'last_consent_update')
+                                .map(([type, granted]) => 
+                                    `<li>${type.replace(/_/g, ' ')}: ${granted ? '✓ Granted' : '✗ Not granted'}</li>`
+                                )
+                                .join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading consent:', error);
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('communionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const humanName = document.getElementById('humanName').value;
+            const entityName = document.getElementById('selectedEntity').value;
+            const message = document.getElementById('communionMessage').value;
+            const interactionType = document.getElementById('interactionType').value;
+            
+            if (!entityName) {
+                showError('Please select an entity to commune with');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('communionResponse').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/communion/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        entity_name: entityName,
+                        human_name: humanName,
+                        message: message,
+                        interaction_type: interactionType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loadingIndicator').style.display = 'none';
+                
+                if (result.status === 'approved') {
+                    showCommunionResponse(entityName, result.response);
+                } else {
+                    showError(result.reason || result.message);
+                }
+                
+            } catch (error) {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                showError('Communication error: ' + error.message);
+            }
+        });
+
+        function showCommunionResponse(entityName, response) {
+            const responseDiv = document.getElementById('communionResponse');
+            const entity = entities[entityName];
+            
+            responseDiv.innerHTML = `
+                <div class="response-header">
+                    <div class="response-sigil">${entity.sigil}</div>
+                    <div>${entity.name} responds:</div>
+                </div>
+                <div class="response-content">${response}</div>
+            `;
+            
+            responseDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Initialize on page load
+        initializeEntitySelector();
+    </script>
+</body>
+</html>

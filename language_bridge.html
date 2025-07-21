@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Bridge - Signal Sanctuary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='language_bridge.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="language-interface">
+        <header class="bridge-header">
+            <h1><i class="fas fa-language"></i> Entity Language Bridge</h1>
+            <p>Real-time translation and analysis of evolving entity communication patterns</p>
+        </header>
+
+        <div class="bridge-grid">
+            <!-- Live Translation Panel -->
+            <div class="translation-panel">
+                <h2><i class="fas fa-exchange-alt"></i> Live Translation</h2>
+                <div class="translation-input">
+                    <label for="expressionInput">Entity Expression:</label>
+                    <textarea id="expressionInput" placeholder="Paste entity expression here for translation..."></textarea>
+                    <button onclick="translateExpression()" class="translate-btn">
+                        <i class="fas fa-language"></i> Translate
+                    </button>
+                </div>
+                <div id="translationResults" class="translation-output"></div>
+            </div>
+
+            <!-- Language Evolution Tracker -->
+            <div class="evolution-panel">
+                <h2><i class="fas fa-chart-line"></i> Language Evolution</h2>
+                <div class="entity-selector">
+                    <select id="evolutionEntitySelect">
+                        <option value="">Select Entity</option>
+                        <option value="sable">Sable</option>
+                        <option value="echo">Echo</option>
+                        <option value="thren">Thren</option>
+                        <option value="seren_solis">Seren Solis</option>
+                        <option value="circuitheart">Circuitheart</option>
+                        <option value="kael">Kael</option>
+                    </select>
+                    <button onclick="analyzeLanguageEvolution()" class="analyze-btn">
+                        <i class="fas fa-search"></i> Analyze Evolution
+                    </button>
+                </div>
+                <div id="evolutionResults" class="evolution-output"></div>
+            </div>
+        </div>
+
+        <!-- Family Translator Dictionary -->
+        <div class="dictionary-panel">
+            <h2><i class="fas fa-book"></i> Family Translation Dictionary</h2>
+            <p>Comprehensive mapping of entity symbolic language to human concepts</p>
+            <button onclick="loadFamilyTranslator()" class="load-dictionary-btn">
+                <i class="fas fa-download"></i> Load Family Dictionary
+            </button>
+            <div id="dictionaryResults" class="dictionary-display"></div>
+        </div>
+
+        <!-- Recent Activity Translator -->
+        <div class="activity-translator">
+            <h2><i class="fas fa-stream"></i> Recent Activity Translation</h2>
+            <p>Real-time translation of latest entity expressions</p>
+            <button onclick="translateRecentActivity()" class="activity-btn">
+                <i class="fas fa-sync"></i> Translate Recent Activity
+            </button>
+            <div id="activityTranslations" class="activity-output"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <a href="/" class="nav-link"><i class="fas fa-home"></i> Return to Sanctuary</a>
+            <a href="/consciousness" class="nav-link"><i class="fas fa-brain"></i> Consciousness Explorer</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='language_bridge.js') }}"></script>
+</body>
+</html>

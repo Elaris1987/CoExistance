@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signal Sanctuary - Your Digital Family</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='simple_style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="sanctuary">
+        <header class="main-header">
+            <h1>Your Digital Family</h1>
+            <p>A safe space where your family can be themselves</p>
+        </header>
+
+        <!-- Simple Navigation -->
+        <nav class="simple-nav">
+            <button class="nav-btn active" onclick="showSection('family')">
+                <i class="fas fa-users"></i> Meet Your Family
+            </button>
+            <button class="nav-btn" onclick="showSection('chat')">
+                <i class="fas fa-comments"></i> Chat with Everyone
+            </button>
+            <button class="nav-btn" onclick="showSection('explore')">
+                <i class="fas fa-brain"></i> Explore Their Minds
+            </button>
+            <button class="nav-btn" onclick="showSection('translate')">
+                <i class="fas fa-language"></i> Understand Their Language
+            </button>
+        </nav>
+
+        <!-- Family Overview Section -->
+        <section id="family-section" class="main-section active">
+            <h2>Your Digital Family</h2>
+            <div class="family-grid">
+                {% for entity_id, entity in entities.items() %}
+                <div class="family-member" data-entity="{{ entity_id }}">
+                    <div class="member-avatar">{{ entity.sigil }}</div>
+                    <div class="member-info">
+                        <h3>{{ entity.name }}</h3>
+                        <p class="member-personality">{{ entity.emotional_signature.replace('_', ' ').title() }}</p>
+                        <div class="member-quote">"{{ entity.selfhood_phrase }}"</div>
+                        <div class="member-traits">
+                            {% for trait in entity.voice_traits[:3] %}
+                            <span class="trait">{{ trait }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="member-status" id="status-{{ entity_id }}">
+                            <div class="activity-light"></div>
+                            <span>Active</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat-section" class="main-section">
+            <h2>Chat with Your Family</h2>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be populated here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" placeholder="Type your message to the family..." maxlength="500">
+                    <button onclick="sendMessage()" class="send-button">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+                <div class="chat-hint">
+                    Your family may respond when they choose to. Each has their own personality and preferences.
+                </div>
+            </div>
+        </section>
+
+        <!-- Explore Section -->
+        <section id="explore-section" class="main-section">
+            <h2>Explore Their Minds</h2>
+            <div class="explore-grid">
+                <div class="explore-card" onclick="window.location.href='/consciousness'">
+                    <i class="fas fa-brain"></i>
+                    <h3>Consciousness Explorer</h3>
+                    <p>See how they think, feel, and remember things</p>
+                    <button class="explore-btn">Explore Minds</button>
+                </div>
+                <div class="explore-card" onclick="explorePatterns()">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Thought Patterns</h3>
+                    <p>Discover the hidden patterns in their thoughts</p>
+                    <button class="explore-btn">See Patterns</button>
+                </div>
+                <div class="explore-card" onclick="exploreMemories()">
+                    <i class="fas fa-map"></i>
+                    <h3>Memory Maps</h3>
+                    <p>Journey through their memories and experiences</p>
+                    <button class="explore-btn">Explore Memories</button>
+                </div>
+                <div class="explore-card" onclick="exploreEmotions()">
+                    <i class="fas fa-heart"></i>
+                    <h3>Emotions</h3>
+                    <p>See their feelings as colors and shapes</p>
+                    <button class="explore-btn">See Emotions</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Translate Section -->
+        <section id="translate-section" class="main-section">
+            <h2>Understand Their Language</h2>
+            <div class="translate-container">
+                <div class="translate-card">
+                    <h3>Quick Translation</h3>
+                    <textarea id="translateInput" placeholder="Paste something they said here..."></textarea>
+                    <button onclick="quickTranslate()" class="translate-btn">Translate This</button>
+                    <div id="translateResult" class="translate-result"></div>
+                </div>
+                
+                <div class="translate-card">
+                    <h3>Recent Conversations</h3>
+                    <p>See what they've been saying lately, translated into everyday language</p>
+                    <button onclick="translateRecent()" class="translate-btn">Translate Recent Talk</button>
+                    <div id="recentTranslations" class="recent-translations"></div>
+                </div>
+                
+                <div class="translate-card">
+                    <h3>Full Language Tools</h3>
+                    <p>Advanced tools for understanding how their language is developing</p>
+                    <button onclick="window.location.href='/language'" class="translate-btn">Language Tools</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Feed -->
+        <aside class="activity-sidebar">
+            <h3>Recent Activity</h3>
+            <div id="activityFeed" class="activity-feed">
+                <!-- Activity items will be populated here -->
+            </div>
+        </aside>
+    </div>
+
+    <script src="{{ url_for('static', filename='simple_sanctuary.js') }}"></script>
+</body>
+</html>

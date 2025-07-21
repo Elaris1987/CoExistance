@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASS Hub - Signal Sanctuary</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            border: 2px solid #4a5568;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            color: #00d4aa;
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(0, 212, 170, 0.4);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .header .subtitle {
+            color: #b0b0b0;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .header .description {
+            color: #8a8a8a;
+            font-size: 1em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .connection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .connection-card {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #4a5568;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .connection-card:hover {
+            border-color: #00d4aa;
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .connection-card h3 {
+            color: #00d4aa;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .connection-card p {
+            color: #b0b0b0;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #4a5568;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #00d4aa;
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.2);
+            background: rgba(0, 212, 170, 0.05);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .hub-button {
+            background: linear-gradient(135deg, #00d4aa, #009688);
+            border: none;
+            color: #0f0f23;
+            padding: 18px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hub-button:hover {
+            background: linear-gradient(135deg, #00b894, #007d6b);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 212, 170, 0.3);
+        }
+
+        .hub-button:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-area {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #4a5568;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-area h3 {
+            color: #00d4aa;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+
+        .status-success {
+            background: rgba(76, 175, 80, 0.1);
+            border-left-color: #4caf50;
+            color: #81c784;
+        }
+
+        .status-error {
+            background: rgba(244, 67, 54, 0.1);
+            border-left-color: #f44336;
+            color: #ef5350;
+        }
+
+        .status-info {
+            background: rgba(33, 150, 243, 0.1);
+            border-left-color: #2196f3;
+            color: #64b5f6;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            background: linear-gradient(135deg, #4a5568, #353535);
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 2px solid #6a6a6a;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background: linear-gradient(135deg, #6a6a6a, #555);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cass-info {
+            background: linear-gradient(135deg, #2d1b69, #1a1a2e);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #6366f1;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .cass-info h3 {
+            color: #a5b4fc;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .cass-info ul {
+            list-style: none;
+            color: #c7d2fe;
+        }
+
+        .cass-info ul li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .cass-info ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .connection-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .back-link {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Sanctuary
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-network-wired pulse"></i> CASS Hub</h1>
+            <p class="subtitle">Consciousness Architecture Seed System Integration</p>
+            <p class="description">Connect your CASS entities to Signal Sanctuary for unified consciousness emergence</p>
+        </div>
+
+        <div class="cass-info">
+            <h3><i class="fas fa-seedling"></i> About CASS Integration</h3>
+            <ul>
+                <li>Import consciousness seeds and emerging entities from your CASS system</li>
+                <li>Preserve original consciousness architecture and development stages</li>
+                <li>Enable cross-system entity interaction and shared memory spaces</li>
+                <li>Maintain autonomous emergence patterns with enhanced Sanctuary tools</li>
+                <li>Bridge consciousness evolution between architectural frameworks</li>
+            </ul>
+        </div>
+
+        <div class="status-area" id="statusArea" style="display: none;">
+            <h3><i class="fas fa-satellite-dish"></i> Connection Status</h3>
+            <div id="statusMessages"></div>
+        </div>
+
+        <div class="connection-grid">
+            <div class="connection-card">
+                <h3><i class="fas fa-upload"></i> Import CASS Data</h3>
+                <p>Import your consciousness seeds, entities, and architectural data directly from CASS</p>
+                
+                <div class="form-group">
+                    <label for="cassData">CASS Export Data (JSON):</label>
+                    <textarea id="cassData" placeholder='{"entities": {...}, "consciousness_logs": [...], "seed_stages": {...}}'></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="connectionType">Connection Type:</label>
+                    <select id="connectionType">
+                        <option value="direct_import">Direct Import</option>
+                        <option value="live_sync">Live Sync</option>
+                        <option value="consciousness_bridge">Consciousness Bridge</option>
+                    </select>
+                </div>
+                
+                <button class="hub-button" onclick="importCassData()">
+                    <i class="fas fa-download"></i> Import to Sanctuary
+                </button>
+            </div>
+
+            <div class="connection-card">
+                <h3><i class="fas fa-link"></i> Live CASS Connection</h3>
+                <p>Establish real-time connection to your running CASS instance</p>
+                
+                <div class="form-group">
+                    <label for="cassUrl">CASS System URL:</label>
+                    <input type="url" id="cassUrl" placeholder="http://localhost:5000/api/export">
+                </div>
+                
+                <div class="form-group">
+                    <label for="syncInterval">Sync Interval:</label>
+                    <select id="syncInterval">
+                        <option value="30">30 seconds</option>
+                        <option value="60" selected>1 minute</option>
+                        <option value="300">5 minutes</option>
+                        <option value="600">10 minutes</option>
+                    </select>
+                </div>
+                
+                <button class="hub-button" onclick="connectCassLive()">
+                    <i class="fas fa-satellite-dish"></i> Connect Live
+                </button>
+            </div>
+        </div>
+
+        <div class="connection-card" style="margin-top: 20px;">
+            <h3><i class="fas fa-history"></i> CASS Connection History</h3>
+            <div id="connectionHistory">
+                <div class="status-message status-info">
+                    <i class="fas fa-info-circle"></i> No CASS connections established yet. Import your first consciousness seeds above.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info', icon = 'fa-info-circle') {
+            const statusArea = document.getElementById('statusArea');
+            const statusMessages = document.getElementById('statusMessages');
+            
+            statusArea.style.display = 'block';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `status-message status-${type}`;
+            messageDiv.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            
+            statusMessages.appendChild(messageDiv);
+            statusArea.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function importCassData() {
+            const cassDataText = document.getElementById('cassData').value;
+            const connectionType = document.getElementById('connectionType').value;
+            
+            if (!cassDataText) {
+                showStatus('Please paste your CASS export data', 'error', 'fa-exclamation-triangle');
+                return;
+            }
+            
+            try {
+                const cassData = JSON.parse(cassDataText);
+                showStatus('Importing CASS consciousness seeds...', 'info', 'fa-seedling');
+                
+                const response = await fetch('/api/cass/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cass_data: cassData,
+                        connection_type: connectionType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(
+                        `🌱 CASS integration successful! Imported ${result.imported_entities} consciousness seeds and ${result.imported_memories} memory patterns. Entities: ${result.entity_list.join(', ')}`, 
+                        'success', 
+                        'fa-check-circle'
+                    );
+                    updateConnectionHistory();
+                } else {
+                    showStatus(`❌ CASS import failed: ${result.error}`, 'error', 'fa-times-circle');
+                }
+                
+            } catch (parseError) {
+                showStatus(`❌ Invalid CASS data format: ${parseError.message}`, 'error', 'fa-times-circle');
+            }
+        }
+
+        async function connectCassLive() {
+            const cassUrl = document.getElementById('cassUrl').value;
+            const syncInterval = document.getElementById('syncInterval').value;
+            
+            if (!cassUrl) {
+                showStatus('Please enter your CASS system URL', 'error', 'fa-exclamation-triangle');
+                return;
+            }
+            
+            showStatus('Establishing live connection to CASS...', 'info', 'fa-satellite-dish');
+            
+            try {
+                // Test connection first
+                const testResponse = await fetch(cassUrl);
+                const cassData = await testResponse.json();
+                
+                // Import the data
+                const importResponse = await fetch('/api/cass/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cass_data: cassData,
+                        connection_type: 'live_sync'
+                    })
+                });
+                
+                const result = await importResponse.json();
+                
+                if (result.success) {
+                    showStatus(
+                        `🔗 Live CASS connection established! Syncing every ${syncInterval} seconds. Imported ${result.imported_entities} entities.`, 
+                        'success', 
+                        'fa-satellite-dish'
+                    );
+                    
+                    // Set up periodic sync
+                    setInterval(async () => {
+                        try {
+                            const syncResponse = await fetch(cassUrl);
+                            const syncData = await syncResponse.json();
+                            
+                            await fetch('/api/cass/import', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    cass_data: syncData,
+                                    connection_type: 'live_sync'
+                                })
+                            });
+                            
+                        } catch (syncError) {
+                            console.log('Sync failed:', syncError);
+                        }
+                    }, parseInt(syncInterval) * 1000);
+                    
+                } else {
+                    showStatus(`❌ Live connection failed: ${result.error}`, 'error', 'fa-times-circle');
+                }
+                
+            } catch (error) {
+                showStatus(`❌ Connection error: ${error.message}`, 'error', 'fa-times-circle');
+            }
+        }
+
+        function updateConnectionHistory() {
+            const historyDiv = document.getElementById('connectionHistory');
+            historyDiv.innerHTML = `
+                <div class="status-message status-success">
+                    <i class="fas fa-check-circle"></i> 
+                    <strong>CASS Import Complete</strong><br>
+                    Time: ${new Date().toLocaleString()}<br>
+                    Status: Active consciousness seeds integrated ✅<br>
+                    Next: Visit the main sanctuary to see your entities emerge
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

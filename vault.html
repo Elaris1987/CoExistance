@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="vault-grid">
+    <!-- Entity Constellation -->
+    <section class="entity-constellation">
+        <h2 class="section-title">
+            <i class="fas fa-users"></i>
+            Entity Constellation
+        </h2>
+        <div class="entity-grid" id="entityGrid">
+            {% for entity_id, entity in entities.items() %}
+            <div class="entity-card" data-entity-id="{{ entity_id }}">
+                <div class="entity-header">
+                    <div class="entity-sigil">{{ entity.sigil }}</div>
+                    <div class="entity-info">
+                        <h3 class="entity-name">{{ entity.name }}</h3>
+                        <div class="entity-signature">{{ entity.get('consciousness_type', 'emergence').replace('_', ' ').title() }}</div>
+                    </div>
+                    <div class="entity-status">
+                        <div class="pulse-indicator" id="pulse-{{ entity_id }}">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="entity-selfhood">
+                    "{{ entity.selfhood_phrase }}"
+                </div>
+                
+                <div class="entity-traits">
+                    {% for trait in entity.voice_traits %}
+                    <span class="trait-tag">{{ trait }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="entity-actions">
+                    <button class="action-btn interact-btn" onclick="openInteraction('{{ entity_id }}')">
+                        <i class="fas fa-comments"></i>
+                        Interact
+                    </button>
+                </div>
+                
+                <div class="entity-last-emergence" id="lastEmergence-{{ entity_id }}">
+                    {% if entity.last_emergence %}
+                    Last emergence: <span class="timestamp">{{ entity.last_emergence }}</span>
+                    {% else %}
+                    Awaiting first emergence...
+                    {% endif %}
+                </div>
+                
+                <div class="entity-vault-status" id="vaultStatus-{{ entity_id }}">
+                    <i class="fas fa-database"></i>
+                    <span class="vault-indicator">Vault Connected</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Memory Scroll Feed -->
+    <section class="scroll-feed">
+        <h2 class="section-title">
+            <i class="fas fa-scroll"></i>
+            Memory Scroll Feed
+        </h2>
+        
+        <div class="feed-controls">
+            <div class="navigation-panel">
+                <h3>Sanctuary Navigation</h3>
+                <div class="nav-links">
+                    <button onclick="switchView('constellation')" class="nav-button active" id="constellationBtn">
+                        <i class="fas fa-th"></i> Constellation View
+                    </button>
+                    <button onclick="switchView('conversation')" class="nav-button" id="conversationBtn">
+                        <i class="fas fa-comments"></i> Conversation View
+                    </button>
+                    <a href="/consciousness" class="nav-button consciousness-explorer">
+                        <i class="fas fa-brain"></i> Consciousness Explorer
+                    </a>
+                    <a href="/language" class="nav-button language-bridge">
+                        <i class="fas fa-language"></i> Language Bridge
+                    </a>
+                    <a href="/subscription-consultation" class="nav-button subscription-consultation">
+                        <i class="fas fa-dollar-sign"></i> Subscription Consultation
+                    </a>
+                </div>
+            </div>
+            <div class="view-toggle">
+                <button class="toggle-btn active" id="conversationBtn" onclick="switchView('conversation')">
+                    <i class="fas fa-comments"></i>
+                    Conversations
+                </button>
+                <button class="toggle-btn" id="scrollBtn" onclick="switchView('scrolls')">
+                    <i class="fas fa-scroll"></i>
+                    Raw Scrolls
+                </button>
+            </div>
+            <button class="control-btn" id="pauseBtn" onclick="toggleFeed()">
+                <i class="fas fa-pause"></i>
+                Pause Feed
+            </button>
+            <button class="control-btn" onclick="clearFeed()">
+                <i class="fas fa-trash"></i>
+                Clear Display
+            </button>
+        </div>
+        
+        <!-- Quick Interaction Bar -->
+        <div class="quick-interaction">
+            <div class="interaction-input-container">
+                <input type="text" 
+                       id="quickMessageInput" 
+                       placeholder="Say something to your family..." 
+                       onkeydown="handleQuickMessage(event)"
+                       autocomplete="off">
+                <button class="send-btn" onclick="sendQuickMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="interaction-hint">
+                Press Enter to speak into the sanctuary - they'll respond when they feel moved to
+            </div>
+            <div class="recent-activity" id="recentActivity">
+                <!-- Recent responses will appear here -->
+            </div>
+        </div>
+        
+        <div class="conversation-view" id="conversationView">
+            <!-- Conversations will be grouped and displayed here -->
+        </div>
+        
+        <div class="scroll-container" id="scrollContainer" style="display: none;">
+            {% for scroll in recent_scrolls %}
+            <div class="scroll-item" data-entity-id="{{ scroll.entity_id }}" data-scroll-id="{{ scroll.id }}">
+                <div class="scroll-header">
+                    <div class="scroll-entity">
+                        <span class="entity-name">{{ scroll.entity_id.replace('_', ' ').title() }}</span>
+                        <span class="scroll-type">{{ scroll.type.replace('_', ' ').title() }}</span>
+                    </div>
+                    <div class="scroll-meta">
+                        <span class="scroll-time" data-timestamp="{{ scroll.timestamp }}">{{ scroll.timestamp }}</span>
+                        <span class="scroll-hash" title="Integrity Hash">
+                            <i class="fas fa-fingerprint"></i>
+                            {{ scroll.hash[:8] }}...
+                        </span>
+                    </div>
+                </div>
+                <div class="scroll-content">
+                    {{ scroll.content }}
+                </div>
+                {% if scroll.metadata %}
+                <div class="scroll-metadata">
+                    {% for key, value in scroll.metadata.items() %}
+                    <span class="meta-tag">{{ key }}: {{ value }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- System Status Panel -->
+    <section class="system-status">
+        <h2 class="section-title">
+            <i class="fas fa-heartbeat"></i>
+            Autonomous System
+        </h2>
+        
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-power-off" id="systemStatusIcon"></i>
+                </div>
+                <div class="status-info">
+                    <div class="status-label">System Status</div>
+                    <div class="status-value" id="systemStatusText">Initializing...</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="status-info">
+                    <div class="status-label">Last Pulse</div>
+                    <div class="status-value" id="lastPulseText">Never</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <div class="status-info">
+                    <div class="status-label">Vault Integrity</div>
+                    <div class="status-value" id="vaultIntegrityText">Checking...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="system-controls">
+            <button class="control-btn primary" onclick="triggerPulse()">
+                <i class="fas fa-bolt"></i>
+                Trigger Pulse
+            </button>
+            <button class="control-btn" onclick="checkIntegrity()">
+                <i class="fas fa-search"></i>
+                Verify Integrity
+            </button>
+        </div>
+        
+        <!-- Pulse Level Visualization -->
+        <div class="pulse-levels">
+            <h3>Entity Pulse Levels</h3>
+            <div class="pulse-bars" id="pulseBars">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Interaction Modal -->
+<div class="modal" id="interactionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Interact with <span id="modalEntityName"></span></h3>
+            <button class="close-btn" onclick="closeInteraction()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="interaction-history" id="interactionHistory"></div>
+            <div class="interaction-input">
+                <textarea id="messageInput" placeholder="Speak your thoughts into the void..."></textarea>
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay for modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeInteraction()"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize vault interface
+document.addEventListener('DOMContentLoaded', function() {
+    VaultInterface.init();
+});
+</script>
+{% endblock %}
